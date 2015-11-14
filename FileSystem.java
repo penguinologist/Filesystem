@@ -14,17 +14,28 @@ public class FileSystem {
 	// class variable - root of all directories
 	private DirectoryObjects directory;
 
-	// constructor
+	/**
+	 * base constructor
+	 */
 	public FileSystem() {
 		directory = new DirectoryObjects("/");
 	}
 
+	/**
+	 * retrieves the content of a directory including both subdirectories as
+	 * well as files within that directory
+	 * 
+	 * @param path
+	 *            the path where we're looking.
+	 * @return a list of files and subdirectories
+	 */
 	public List<String> ls(String path) {
 		return getDirectory(path, directory).stringy();
 	}
 
 	/**
-	 * gets the directory
+	 * gets the directory for the path provided. Made it a private method for
+	 * other functions to call for future reference.
 	 * 
 	 * @param path
 	 *            assumed to always be a correct path.
@@ -62,7 +73,6 @@ public class FileSystem {
 				direcs.add(temp);
 			}
 
-			
 			// go through each directory, checking if it exists. if not, create
 			// the directory and repeat.
 			DirectoryObjects l = current;
@@ -83,6 +93,12 @@ public class FileSystem {
 
 	}
 
+	/**
+	 * creates a new directory given a path.
+	 * 
+	 * @param dirPath
+	 *            the path that needs to be created.
+	 */
 	public void mkdirP(String dirPath) {
 
 		// check if you need to go anywhere further
@@ -115,8 +131,6 @@ public class FileSystem {
 				direcs.add(temp);
 			}
 
-			
-
 			// go through each directory, checking if it exists. if not, create
 			// the directory and repeat.
 			DirectoryObjects current = directory;
@@ -135,6 +149,14 @@ public class FileSystem {
 
 	}
 
+	/**
+	 * add a new file with content. Ignore duplicates.
+	 * 
+	 * @param filePath
+	 *            the path where the file needs to be added.
+	 * @param content
+	 *            the content of the file that needs to be created.
+	 */
 	public void addFileWithContent(String filePath, String content) {
 		// get the path
 		String path = filePath.substring(0, filePath.lastIndexOf("/"));
@@ -144,12 +166,19 @@ public class FileSystem {
 		getDirectory(path, directory).getFiles().add(new FileObjects(name, content));
 	}
 
+	/**
+	 * retrieves the content of a file for the provided file path.
+	 * 
+	 * @param filePath
+	 *            the path of the file to be searched for.
+	 * @return the file's contents, or an empty string if nothing is found.
+	 */
 	public String getFileContent(String filePath) {
 		String content = "";
 		// get the path
 		String path = filePath.substring(0, filePath.lastIndexOf("/"));
 		// get the file's name
-		String name = filePath.substring(filePath.lastIndexOf("/")+1);
+		String name = filePath.substring(filePath.lastIndexOf("/") + 1);
 		// iterate through all the files to see if we can find it...
 		for (FileObjects t : getDirectory(path, directory).getFiles()) {
 			if (name.equals(t.getName())) {
@@ -161,6 +190,8 @@ public class FileSystem {
 		return content;
 
 	}
+
+	// -----------------------------------------------
 
 	public static void main(String[] args) {
 		// assumption: all path starts with / and do not end with /
@@ -185,7 +216,7 @@ public class FileSystem {
 		System.out.println(fs.getFileContent("/a/b/c/d"));
 	}
 
-	/*
+	/**
 	 * class that stores all the files along with content
 	 */
 	class FileObjects {
@@ -229,7 +260,7 @@ public class FileSystem {
 
 	}
 
-	/*
+	/**
 	 * class that stores all the directories.
 	 */
 	class DirectoryObjects {
@@ -238,6 +269,12 @@ public class FileSystem {
 		private List<FileObjects> files;
 		private String name;
 
+		/**
+		 * constructor
+		 * 
+		 * @param name
+		 *            of the directory
+		 */
 		DirectoryObjects(String name) {
 			subdirectories = new ArrayList<>();
 			files = new ArrayList<>();
@@ -261,13 +298,20 @@ public class FileSystem {
 		}
 
 		/**
-		 * @return the files
+		 * retrieves all the file objects
+		 * 
+		 * @return a list of file objects
 		 */
 		public List<FileObjects> getFiles() {
 
 			return files;
 		}
 
+		/**
+		 * This method retrieves the file names in the current directory.
+		 * 
+		 * @return file names as a list of strings.
+		 */
 		public List<String> getFileNames() {
 			List<String> names = new ArrayList<>();
 			for (FileObjects t : files) {
@@ -286,8 +330,10 @@ public class FileSystem {
 		}
 
 		/**
+		 * This method creates a list of strings for the names of all
+		 * directories and files in the filesystem
 		 * 
-		 * @return
+		 * @return list of file system content.
 		 */
 		public List<String> stringy() {
 			List<String> temp = new ArrayList<>();
@@ -295,15 +341,18 @@ public class FileSystem {
 			temp.addAll(getFileNames());
 			// add all the directories [indicated by a "-"]
 			for (DirectoryObjects t : subdirectories) {
-				temp.add( t.name);
+				temp.add(t.name);
 			}
 
 			return temp;
 		}
 
 		/**
-		 * retrieves directories by name. This method was created to remove repetitive calls
-		 * @param nam the name of the object searched for.
+		 * retrieves directories by name. This method was created to remove
+		 * repetitive calls
+		 * 
+		 * @param nam
+		 *            the name of the object searched for.
 		 * @return the object if found, else null.
 		 */
 		public DirectoryObjects getDirectoryByName(String nam) {
